@@ -133,68 +133,59 @@ The agent will:
 
 ---
 
-## Example Trace
+## Example Traces
 
-Below is a real trace using **Ollama** with **`ministral-3:latest`**:
+### Example 1: CI/CD Pipeline Flowchart
 
 **User:**
-> Create a sequence diagram showing how a user logs into a web app. Include the browser, frontend server, auth service, and database. Show success and failure paths.
+> Draw a flowchart for a CI/CD pipeline. Start with code push, run tests, and if tests pass deploy to staging. If tests fail, send a Slack alert.
 
-**Agent (Turn 1 - Load Skill):**
-> Tool Calls:
-> - `load_skill(skill_name="mermaid-diagrams")`
+**Generated Diagram:**
+```mermaid
+graph TD
+    A[Code Push] --> B{Run Tests}
+    B -->|Pass| C[Deploy to Staging]
+    B -->|Fail| D[Send Slack Alert]
+```
 
-**Tool Result:**
-> Loaded skill: mermaid-diagrams
->
-> # Mermaid Diagrams Skill
-> ## Sequence Diagrams
-> - Start with: `sequenceDiagram`
-> - Participants: `participant A as Alice`
-> - Arrows: `A->>B: Message`
-> - Blocks: `alt ... else ... end`
-> ...
+You can paste this into any Mermaid viewer (e.g., GitHub markdown, Notion, or mermaid.live) to visualize your CI/CD pipeline.
 
-**Agent (Turn 2 - Generate Diagram):**
-> Tool Calls:
-> - `generate_mermaid_diagram(diagram_type="sequence", mermaid_code="sequenceDiagram\n    participant U as User\n    ...")`
+---
 
-**Tool Result:**
-> ```mermaid
-> sequenceDiagram
->     participant U as User
->     participant B as Browser
->     participant F as Frontend
->     participant A as AuthService
->     participant D as Database
->
->     U->>B: Enter credentials
->     B->>F: POST /login
->     F->>A: Validate credentials
->     A->>D: Query user hash
->
->     alt Valid credentials
->         D-->>A: Return user record
->         A-->>F: Issue JWT token
->         F-->>B: Set cookie + redirect
->         B-->>U: Show dashboard
->     else Invalid credentials
->         D-->>A: User not found
->         A-->>F: 401 Unauthorized
->         F-->>B: Show error
->         B-->>U: "Invalid login"
->     end
-> ```
+### Example 2: Product Search Sequence Diagram
 
-**Agent (Final Answer):**
-> Here is your sequence diagram:
->
-> ```mermaid
-> sequenceDiagram
->     ...
-> ```
->
-> You can paste this into any Mermaid viewer (e.g., GitHub markdown, Notion, or mermaid.live) to see the visualization.
+**User:**
+> Draw a sequence diagram for a product search. The API Gateway asks the Product Service, which first checks Redis cache. If cache misses, it queries PostgreSQL and writes back to cache. Return results to the user either way.
+
+**Generated Diagram:**
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant Gateway as API Gateway
+    participant Cache as Redis Cache
+    participant DB as PostgreSQL
+    participant ProductService as Product Service
+
+    User->>Gateway: Search Request (e.g., "laptops")
+    Gateway->>ProductService: Forward Request
+
+    alt Cache Hit
+        ProductService->>Cache: Check Cache
+        Cache-->>ProductService: Return Results (Cached)
+    else Cache Miss
+        ProductService->>Cache: Check Cache
+        Cache-->>ProductService: Cache Miss
+        ProductService->>DB: Query Database
+        DB-->>ProductService: Return Results
+        ProductService->>Cache: Write to Cache
+        Cache-->>ProductService: Cache Updated
+    end
+
+    ProductService-->>Gateway: Return Results
+    Gateway-->>User: Return Results to User
+```
+
+You can paste this into any Mermaid viewer to see the sequence of interactions in your product search flow.
 
 ---
 
