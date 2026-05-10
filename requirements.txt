@@ -1,0 +1,8 @@
+langchain-google-genai
+langchain-ollama
+dotenv
+httpx 
+uvicorn
+langchain 
+psycopg2-binary
+langchain-openai
